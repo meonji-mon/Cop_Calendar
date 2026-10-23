@@ -1,0 +1,28 @@
+name: Security regression
+
+on:
+  push:
+    branches: [main, 'security/**']
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  security-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Install Flutter 3.24.2
+        run: |
+          git clone --depth 1 --branch 3.24.2 https://github.com/flutter/flutter.git "$RUNNER_TEMP/flutter"
+          test "$(git -C "$RUNNER_TEMP/flutter" rev-parse HEAD)" = 4cf269e36de2573851eaef3c763994f8f9be494d
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+      - run: flutter pub get --enforce-lockfile
+      - name: Check security code formatting
+        run: dart format --output=none --set-exit-if-changed lib/auth/auth_controller.dart lib/function/f_url_href.dart test/security
+      - name: Analyze security code and tests
+        run: flutter analyze --no-pub lib/auth/auth_controller.dart lib/function/f_url_href.dart test/security
+      - name: Run local security regressions
+        run: flutter test --no-pub test/security
