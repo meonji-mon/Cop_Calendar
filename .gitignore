@@ -95,6 +95,8 @@ app.*.map.json
 # 기타
 *.class
 *.lock
+!pubspec.lock
+.local-pub-cache/
 *.log
 *.pyc
 *.swp

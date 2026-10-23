@@ -7,7 +7,7 @@ import "package:flutter_linkify/flutter_linkify.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
 import "package:get/get.dart";
 import "package:intl/intl.dart";
-import "package:url_launcher/url_launcher.dart";
+import "package:events_app/function/f_url_href.dart";
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});
@@ -132,11 +132,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                           ),
                                           linkStyle: const TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.bold),
                                           onOpen: (link) async {
-                                            if (await canLaunchUrl(Uri.parse(link.url))) {
-                                              await launchUrl(Uri.parse(link.url));
-                                            } else {
-                                              throw 'Could not launch ${link.url}';
-                                            }
+                                            await launchURL(link.url);
                                           },
                                         ),
                                       ],

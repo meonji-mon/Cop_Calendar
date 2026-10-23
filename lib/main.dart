@@ -1,6 +1,8 @@
 import "dart:ui";
 
 import "package:events_app/api/api_data.dart";
+import "package:events_app/api/api_database_query.dart";
+import "package:events_app/api/api_kakao_login.dart";
 import "package:events_app/g_gets.dart";
 import "package:events_app/page/p_notification_page.dart";
 import "package:events_app/page/p_search_page.dart";
@@ -25,8 +27,6 @@ void main() async {
     javaScriptAppKey: kakaoJavaScriptAppKey,
   );
 
-  print(await KakaoSdk.origin);
-
   runApp(MyApp(isDarkTheme));
 }
 
@@ -44,7 +44,12 @@ class MyApp extends StatelessWidget {
           Get.put(SelectedDayController());
           Get.put(SelectedRoomController());
           Get.put(DScrollController());
-          Get.put(AuthController());
+          final socialLogin = KakaoLogin();
+          Get.put(AuthController(
+            signIn: socialLogin.login,
+            signOut: socialLogin.logout,
+            registerUser: insertUserPreferences,
+          ));
         }),
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
