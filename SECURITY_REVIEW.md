@@ -17,6 +17,13 @@ Windows의 별도 체크아웃과 로컬 모의 데이터로 조사했다. 시�
 | Android 릴리스에 디버그 서명 사용 — 배포 설정 위험 | 개발용 키로 릴리스를 배포하면 릴리스 키 관리·신뢰 경계를 적용할 수 없다. 그 키를 확보한 공격자는 같은 서명으로 업데이트를 만들 수 있다. 모든 디버그 키가 동일하거나 공개라는 의미는 아니다. | `android/app/build.gradle` release의 `signingConfigs.debug`. | 자동 디버그 서명 fallback을 제거했다. 배포 전 별도 승인 아래 비공개 릴리스 서명 구성이 필요하며 이번에는 키 생성·교체·배포를 하지 않았다. |
 | 의존성 재현성 부재 — 공급망 관리 위험 | `*.lock` 제외로 같은 소스를 설치해도 의존성 버전이 달라질 수 있었다. 특정 패키지의 취약성이 확인된 것은 아니다. | `.gitignore`와 lockfile 부재. | 앱의 `pubspec.lock`을 추적하고 CI에서 `--enforce-lockfile`을 사용한다. 무관한 주요 버전 업그레이드는 하지 않았다. |
 
+Android 통신 변경은 **플랫폼 네트워크 정책을 따르는 연결**에 대한 설정이다.
+Dart/Flutter가 직접 소유한 socket까지 이 플래그가 강제하는 것은 아니다.
+누락된 API가 Dart HTTP/socket을 사용한다면 그 구현에서 HTTPS를 별도로 강제하고
+redirect·인증서 검증도 확인해야 한다. 따라서 모든 앱 통신의 암호화가 검증되거나
+완료되었다고 해석해서는 안 된다.
+근거: [Flutter 네트워크 정책의 socket 적용 범위](https://docs.flutter.dev/release/breaking-changes/network-policy-ios-android).
+
 ## 별도 조치가 필요한 비밀정보 노출
 
 삭제된 과거 PHP 소스에 DB 비밀번호 리터럴과 DB 연결 코드가 있다.
